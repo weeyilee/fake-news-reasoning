@@ -39,12 +39,14 @@ def preprocessed_pos(sentences):
     nava = []
     nava_words = []
     for t in pt:
-        if t[1].startswith('NN') or t[1].startswith('NNS') or t[1].startswith('NNP') or t[1].startswith('NNPS') or t[1].startswith('JJ') or t[1].startswith('JJR') or t[1].startswith('JJS') or  t[1].startswith('VB') or t[1].startswith('VBG') or t[1].startswith('VBN') or t[1].startswith('VBP') or t[1].startswith('VBZ') or t[1].startswith('RB') or t[1].startswith('RBR') or t[1].startswith('RBS'):
+#        if t[1].startswith('NN') or t[1].startswith('NNS') or t[1].startswith('NNP') or t[1].startswith('NNPS') or t[1].startswith('JJ') or t[1].startswith('JJR') or t[1].startswith('JJS') or  t[1].startswith('VB') or t[1].startswith('VBG') or t[1].startswith('VBN') or t[1].startswith('VBP') or t[1].startswith('VBZ') or t[1].startswith('RB') or t[1].startswith('RBR') or t[1].startswith('RBS'):
+
+        if t[1].startswith('NN') or t[1].startswith('NNS') or t[1].startswith('NNP') or t[1].startswith('NNPS') or t[1].startswith('JJ') or t[1].startswith('JJR') or t[1].startswith('JJS') or  t[1].startswith('VB') or t[1].startswith('VBG') or t[1].startswith('VBN') or t[1].startswith('VBP') or t[1].startswith('VBZ'):
             nava.append(t)
             nava_words.append(t[0])
     return nava_words
 
-steps = ["pos","stop","stem"]
+steps = ['pos', 'stem', 'stop']
 
 def clean_str(string):
     # print(f' string \n {string} ')
