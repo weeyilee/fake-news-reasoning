@@ -1,6 +1,7 @@
 import torch
 DEVICE = torch.device("cuda")
-BERT_MODEL_PATH = "bert-base-uncased"
+#BERT_MODEL_PATH = "bert-base-uncased"
+BERT_MODEL_PATH = "distilbert-base-uncased"
 
 MASK_TOKEN = 0
 UNK_TOKEN = 1
