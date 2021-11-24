@@ -7,6 +7,8 @@ nltk.download('punkt')
 nltk.download('stopwords')
 nltk.download('SnowballStemmer')
 nltk.download('averaged_perceptron_tagger')
+nltk.download('wordnet')
+from nltk.corpus import wordnet
 
 
 
@@ -45,15 +47,108 @@ def preprocessed_pos(sentences):
             nava.append(t)
             nava_words.append(t[0])
     return nava_words
+    
+    
+def find_antonym(word, word_freq):
+    synonyms = set()
+    antonyms = set()
 
-steps = ['pos', 'stem', 'stop']
+    for syn in wordnet.synsets(word):   
+        for l in syn.lemmas():
+            synonyms.add(l.name())
+            for antonym in l.antonyms():
+                antonyms.add(antonym.name())
+                
+    antonymsL = list(antonyms)
+    if len(antonymsL) != 0:
+        selected = list(antonyms)[0]
+        freq = 0
+        for antonym in antonyms:
+            if antonym in word_freq.keys():
+                freqnew = int(word_freq[antonym])                
+                if freqnew > freq:
+                    selected = antonym
+                    freq = freqnew
+        return(selected)        
+    
+    else:
+        return None
+
+no_neg_list = ['be', 'being', 'just', 'been', 'receive', 'received', 'receiving', 'give', 'gave', 'given', 'even', 'get', 'getting', 'got', 'come', 'came', 'go', 'going', 'went', 'do', 'did', 'done', 'make', 'made', 'call', 'called', 'calling', 'face', 'buy', 'bought', 'mental', 'have', 'had', 'having', 'look', 'looked', 'looking']
+
+
+
+def preprocessed_neg(words, word_freq):
+    words_org = words.copy()
+    idx = 0
+    indices = []
+    indices = [i for i, x in enumerate(words) if x == 'not' or x == 'never']    
+    c = 0
+#     print(words)
+#     print(indices)
+    for i in indices:
+        le = len(words)
+        i -= c
+        
+        if i >= 0 and i+1 < le : 
+            if words[i+1] not in no_neg_list:
+                antonym = find_antonym(words[i+1], word_freq)
+                if antonym:            
+                    words[i] = antonym
+                    words.pop(i+1)
+                    c += 1
+    #                 print('***********************************')
+    # if c > 0:
+        
+    #     print(' '.join(words_org))
+    #     print(' '.join(words))
+    #     print('***********************************\n\n')
+        
+    return (words)
+
+
+filepath = 'sorted.uk.word.unigrams'  
+word_freq = {}  
+count = 0
+with open(filepath, encoding= 'utf-8') as f:
+    for line in f:
+        line = line.rstrip()
+        if line:
+            x = line.split('\t')
+            #print(x)
+            #print(key, val)
+            #print(str(x[1]))
+            word_freq[x[1]] = str(x[0])
+        count +=1
+        if count > 100000:
+            break
+
+steps = ['neg']
 
 def clean_str(string):
-    # print(f' string \n {string} ')
+    # print(f'string:\t {string} ')
     # print(steps)
     
     # add \' for negation process if needed
-    string = re.sub(r"[^A-Za-z0-9\']", " ", string)
+    # string = re.sub(r"[^A-Za-z0-9\']", " ", string)
+    # per Ben's request, numeric will confuse the model; therefore, remove the numeric
+    string = re.sub(r"[^A-Za-z\']", " ", string)
+    string = re.sub(r"\s{2,}", " ", string)
+    # retval = string.strip().lower()
+    str2 = string.strip().lower()
+    words= nltk.word_tokenize(str2)
+    
+    retval = ' '.join(words)
+    return retval
+    
+def preprocess(string):
+    # print(f'string:\t {string} ')
+    # print(steps)
+    
+    # add \' for negation process if needed
+    # string = re.sub(r"[^A-Za-z0-9\']", " ", string)
+    # per Ben's request, numeric will confuse the model; therefore, remove the numeric
+    string = re.sub(r"[^A-Za-z\']", " ", string)
     string = re.sub(r"\s{2,}", " ", string)
     # retval = string.strip().lower()
     str2 = string.strip().lower()
@@ -61,8 +156,8 @@ def clean_str(string):
     
       # Need to follow exact sequence of preprocessing steps
     
-    # if "neg" in steps:
-    # main_data, snippets_data = preprocessed_neg(main_data, snippets_data)
+    if "neg" in steps:
+        words = preprocessed_neg(words, word_freq)
     
     if "pos" in steps:
         words = preprocessed_pos(words)
@@ -77,6 +172,6 @@ def clean_str(string):
     # print("stem word \n", words)
     
     retval = ' '.join(words)
-    # print(retval)
+    # print(f'Processed:\t{retval}')
     
     return retval
