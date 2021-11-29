@@ -155,20 +155,25 @@ def preprocess(string, step = 'none'):
     words= nltk.word_tokenize(str2)
     
       # Need to follow exact sequence of preprocessing steps
-    
-    if "neg" in step:
+    if step == 'all':
         words = preprocessed_neg(words, word_freq)
-    
-    if "pos" in step:
         words = preprocessed_pos(words)
-    # print("pos word \n", words)
-    
-    if "stop" in step:
         words = preprocessed_stop(words)
-    # print("stop word \n", words)
-    
-    if "stem" in step:
         words = preprocessed_stem(words)
+    else:
+        if "neg" in step:
+            words = preprocessed_neg(words, word_freq)
+        
+        if "pos" in step:
+            words = preprocessed_pos(words)
+        # print("pos word \n", words)
+        
+        if "stop" in step:
+            words = preprocessed_stop(words)
+        # print("stop word \n", words)
+        
+        if "stem" in step:
+            words = preprocessed_stem(words)
     # print("stem word \n", words)
     
     retval = ' '.join(words)
