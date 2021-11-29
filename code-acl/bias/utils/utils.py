@@ -123,7 +123,7 @@ with open(filepath, encoding= 'utf-8') as f:
         if count > 100000:
             break
 
-steps = ['neg']
+
 
 def clean_str(string):
     # print(f'string:\t {string} ')
@@ -141,7 +141,7 @@ def clean_str(string):
     retval = ' '.join(words)
     return retval
     
-def preprocess(string):
+def preprocess(string, step = 'none'):
     # print(f'string:\t {string} ')
     # print(steps)
     
@@ -156,18 +156,18 @@ def preprocess(string):
     
       # Need to follow exact sequence of preprocessing steps
     
-    if "neg" in steps:
+    if "neg" in step:
         words = preprocessed_neg(words, word_freq)
     
-    if "pos" in steps:
+    if "pos" in step:
         words = preprocessed_pos(words)
     # print("pos word \n", words)
     
-    if "stop" in steps:
+    if "stop" in step:
         words = preprocessed_stop(words)
     # print("stop word \n", words)
     
-    if "stem" in steps:
+    if "stem" in step:
         words = preprocessed_stem(words)
     # print("stem word \n", words)
     
